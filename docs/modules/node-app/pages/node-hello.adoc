@@ -1,0 +1,249 @@
+////
+// Ejemplo 2: Hola Mundo en OpenAI
+////
+
+= _Hola mundo_ en OpenAI
+
+A continuación se muestra un ejemplo de *utilización de la API de OpenAI en un proyecto NodeJS utilizando ExpressJS*. 
+
+****
+Se desarrollará un servicio que permita a un usuario introducir un listado de películas y que el servicio devuelva una lista de películas recomendadas al usuario y con la razón de la recomendación.
+****
+
+== Creación del recurso de OpenAI en Azure
+
+Para poder utilizar la API de OpenAI es necesario crear un recurso de OpenAI en Azure. Para ello, debemos seguir los siguientes pasos:
+
+1. Acceder a https://portal.azure.com[Azure Portal], seleccionar *Azure OpenAI* y seleccionar el botón `+ Crear`.
+
+2. Seleccionar la suscripción y el grupo de recursos donde se va a crear el recurso de OpenAI. Si no se tiene ninguno, se puede crear uno nuevo.
+
+3. Seleccionar el nombre del recurso, la región y el plan de tarifas. Como nombre del recurso se puede poner `usuario-openai`, la mejor región es `South Central US` y el plan de tarifas es `S0`.
+
+4. Seleccionar el botón `Crear`.
+
+5. Una vez creado el recurso, se puede acceder a la página de administración del recurso de OpenAI en Azure.
+
+== Implementar un modelo de OpenAI en Azure
+
+Para poder utilizar un modelo de OpenAI es necesario implementarlo en Azure. Para ello, debemos seguir los siguientes pasos:
+
+1. Acceder a https://oai.azure.com[Azure OpenAI Studio].
+
+2. Seleccionar la opción `Modelos` y el botón `Implementar modelo`.
+
+3. Seleccionar el modelo que se quiere implementar. En este caso, se va a implementar el modelo `gpt-35-turbo`.
+
+4. Establecer un nombre para la implementación. Por ejemplo, `gpt3`.
+
+5. Pulsar en el botón `Crear`.
+
+== Recopilar datos para utilizar la API de OpenAI
+
+Necesitamos los siguientes datos para poder utilizar la API de OpenAI:
+
+* *API Key*: Se puede obtener en la página de administración del recurso de OpenAI en Azure.
+
+* *Endpoint*: Se puede obtener en la página de administración del recurso de OpenAI en Azure.
+
+* *Deployment*: Nombre de la implementación del modelo de OpenAI en Azure.
+
+== Creación de Endpoint en ExpressJS
+
+Podemos partir de un proyecto NodeJS con ExpressJS. En este caso, se ha utilizado el proyecto https://github.com/ualcnsa/nodeapp. Este proyecto implementa un hola mundo en NodeJS con ExpressJS.
+
+El primer paso es instalar las dependencias necesarias para poder utilizar la API de OpenAI. Para ello, se debe ejecutar el siguiente comando:
+
+[source,shell]
+----
+npm install openai
+----
+
+En segundo lugar, se debe crear un fichero `src/config/configuration.js` con el siguiente contenido:
+
+[source,javascript]
+----
+const openai = require('openai');
+
+const configuration = {
+  openai: new openai.Configuration({
+    basePath: 'https://ggf906-openai.openai.azure.com/openai/deployments/gpt3', <1>
+    apiKey: '3f9f9f99f9f9f9f9f9f9f9f9f9f9f9f', <2>
+  }),
+};
+
+module.exports = configuration;
+----
+
+<1> Endpoint de la API de OpenAI. `ggf906-openai` es el nombre del recurso de OpenAI en Azure y `gpt3` es el nombre de la implementación del modelo de OpenAI en Azure.
+<2> API Key de la API de OpenAI.
+
+En tercer lugar, se debe crear un fichero `src/services/movie-recommendations.js` con el siguiente contenido:
+
+[source,javascript]
+----
+const configuration = require('../config/configuration');
+
+class MovieRecommendationsService {
+  constructor(openAIApi) {
+    this.openai = openAIApi; <1>
+  }
+
+  async getMovieRecommendations({ movies }) {
+    const completion = await this.openai.createChatCompletion( <2>
+      {
+        model: 'gpt-3.5-turbo', <3>
+        messages: [ <4>
+          {
+            role: 'system', <5>
+            content:
+              'Given a list of movies suggest 5 new movies. Reply with only the answer in JSON form and include no other commentary. It is an array of objects called movies with title, director, year and reason.', <6>
+          },
+          {
+            role: 'user', <7>
+            content: movies.join(','), <8>
+          },
+        ],
+      },
+      {
+        headers: {
+          'api-key': configuration.openai.apiKey, <9>
+        },
+        params: {
+          'api-version': '2023-03-15-preview', <10>
+        },
+      }
+    );
+
+    return this.extractJSON(completion.data.choices[0].message.content); <11>
+  }
+
+  extractJSON(text) {
+    const jsonStart = text.indexOf('```json'); <12>
+    if (jsonStart === -1) { <13>
+      const movies = JSON.parse(text);
+      return movies.movies ? movies : { movies }; <14>
+    }
+    const jsonEnd = text.indexOf('```', jsonStart + 1);
+    const json = text.substring(jsonStart + 7, jsonEnd);
+    return JSON.parse(json);
+  }
+}
+
+module.exports = MovieRecommendationsService;
+----
+
+<1> Se inyecta la API de OpenAI.
+<2> Se llama al método `createChatCompletion` de la API de OpenAI que se encarga de interactuar con el modelo de OpenAI.
+<3> Se indica el modelo que se va a utilizar. En este caso, se va a utilizar el modelo `gpt-3.5-turbo`.
+<4> Se indica el listado de mensajes que se van a enviar al modelo de OpenAI. 
+<5> Se indica el rol del mensaje. En este caso, el rol es `system`.
+<6> Se indica el comportamiento del modelo de OpenAI. En este caso, se indica que el modelo debe devolver un listado de películas recomendadas al usuario siguiendo un formato determinado y usando JSON.
+<7> Se indica el rol del mensaje. En este caso, el rol es `user`.
+<8> Se indica el listado de películas que se van a enviar al modelo de OpenAI. Estas películas se reciben como parámetro del método / endpoint.
+<9> Se indica la API Key de la API de OpenAI.
+<10> Se indica la versión de la API de OpenAI. Requisito de la versión de Azure OpenAI Studio.
+<11> Se extrae el JSON del mensaje devuelto por el modelo de OpenAI. El resultado devuelto puede venir de diferentes maneras y es necesario procesarlo para obtener el JSON.
+<12> Se trata de un mensaje formateado como código. Se busca el inicio del código.
+<13> Si no se encuentra el inicio del código, se asume que el mensaje es un JSON.
+<14> Se devuelve el JSON. Si no existe el campo `movies`, se devuelve el JSON como un objeto con el campo `movies`.
+
+[NOTE]
+====
+Puesto que el uso de la API de OpenAI es un servicio de pago, se recomienda diseñar los mensajes utilizando https://chat.openai.com/[OpenAI Chat] para comprobar que el modelo devuelve el resultado esperado.
+====
+
+En cuarto lugar, se ha modificado el fichero `src/app.js` para añadir el endpoint `/movie-recommendations`:
+
+[source,javascript]
+----
+const express = require('express');
+const bodyParser = require('body-parser');
+
+...
+
+const MovieRecommendationsService = require('./services/movie-recommendations'); <1>
+const configuration = require('./config/configuration'); <1>
+const { OpenAIApi } = require('openai'); <1>
+
+const app = express();
+app.use(bodyParser.json()); <2>
+
+...
+
+app.put('/post-test', async (req, res) => { <3>
+  console.log('Got body:', req.body);
+  const recommendations = await new MovieRecommendationsService(
+    new OpenAIApi(configuration.openai)
+  ).getMovieRecommendations(req.body); <4>
+  res.send(recommendations); <5>
+});
+
+module.exports = app;
+----
+
+<1> Se importan las dependencias necesarias.
+<2> Se añade el middleware `body-parser` para poder parsear el cuerpo de la petición.
+<3> Se añade el endpoint `/movie-recommendations`.
+<4> Se llama al servicio `MovieRecommendationsService` para obtener las recomendaciones de películas.
+<5> Se devuelve el resultado de las recomendaciones de películas.
+
+== Prueba del Endpoint
+
+Para probar el endpoint, se puede utilizar Postman. En este caso, se ha utilizado el siguiente JSON:
+
+[source,json]
+----
+{
+  "movies": [
+    "The Matrix",
+    "Blade Runner",
+    "2001: A Space Odyssey"
+  ]
+}
+----
+
+y se ha obtenido el siguiente resultado:
+
+[source,json]
+----
+{
+  "movies": [
+    {
+      "title": "Inception",
+      "director": "Christopher Nolan",
+      "year": "2010",
+      "reason": "mind-bending sci-fi"
+    },
+    {
+      "title": "Interstellar",
+      "director": "Christopher Nolan",
+      "year": "2014",
+      "reason": "visually stunning sci-fi"
+    },
+    {
+      "title": "Ex Machina",
+      "director": "Alex Garland",
+      "year": "2014",
+      "reason": "thought-provoking sci-fi"
+    },
+    {
+      "title": "Blade Runner 2049",
+      "director": "Denis Villeneuve",
+      "year": "2017",
+      "reason": "sequel to Blade Runner"
+    },
+    {
+      "title": "Her",
+      "director": "Spike Jonze",
+      "year": "2013",
+      "reason": "romantic sci-fi"
+    }
+  ]
+}
+----
+
+[NOTE]
+====
+La llamada a la API de OpenAI lleva un coste asociado derivado del número de tokens que se envían al modelo. Para este número se tiene en cuenta tanto el número de tokens de los mensajes en el código como el número de tokens de los mensajes en el JSON de respuesta.
+====

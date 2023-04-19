@@ -1,0 +1,15 @@
+= Primeros pasos con Azure OpenAI
+:navtitle: Primeros pasos con Azure OpenAI
+
+////
+COLOCA A CONTINUACION LOS OBJETIVOS
+////
+.Objetivos
+====
+* Vamos a solicitar creditos para poder usar Azure de forma gratuita.
+
+* Después, solicitaremos una cuenta de Azure OpenAI y acceso a los modelos de lenguaje de GPT-3 y GPT-4.
+
+====
+
+

@@ -1,0 +1,36 @@
+= Solicitud de acceso a modelos GPT-3 y GPT-4
+
+== Introducción a OpenAI
+
+OpenAI es una organización sin ánimo de lucro que busca desarrollar inteligencia artificial segura y beneficios para la humanidad.
+
+Algunas de los modelos de lenguaje que han desarrollado son:
+
+* GPT-3: Generative Pre-trained Transformer 3
+* GPT-4: Generative Pre-trained Transformer 4
+* DALL-E: Discrete VAE for Conditional Image Generation
+
+Algunos de estos modelos estan disponibles a través de Azure *OpenAI* y se pueden utilizar con el credito de estudiantes de Azure.
+
+== Solicitar acceso a modelos GPT-3
+
+Para empezar a trabajar necesitamos solicitar acceso a los modelos GPT-3 mediante el siguiente formulario: https://aka.ms/oai/access.
+
+[NOTE]
+====
+Hay que marcar la casilla de *Text and code models* para poder utilizar GPT-3.
+También es necesario introducir el *id de la suscripción de Azure.* Para obtenerlo, hay que ir a la suscripción de Azure y copiar el id que aparece en la URL.
+Marcar *ISV* como tipo de organización y *250-499* como número de empleados.
+====
+
+Pasados unos días, recibiremos un correo con la confirmación de acceso a los modelos.
+
+== Solicitar acceso a modelos GPT-4
+
+Para solicitar acceso a los modelos GPT-4, hay que rellenar el siguiente formulario: https://aka.ms/oai/get-gpt4.
+
+[NOTE]
+====
+Solo se puede solicitar teniendo acceso a los modelos GPT-3.
+Es necesario introducir el id de solicitud de acceso a los modelos GPT-3.
+====

@@ -1,0 +1,51 @@
+= Activación de la suscripción de Azure
+
+.Objetivos
+====
+* Activación de la suscripción de Azure.
+* Solicitud de créditos para estudiantes.
+====
+
+== Introducción a Azure
+
+*Azure* es una plataforma de *cloud computing* que ofrece una amplia gama de servicios para la creación de aplicaciones y servicios en la nube.
+
+Entre los servicios que ofrece Azure podemos destacar:
+
+* *Azure DevOps*: Herramienta de gestión de proyectos de desarrollo de software.
+* *Azure Cognitive Services*: Herramienta de inteligencia artificial.
+* *Azure OpenAI*: Herramienta para el acceso a modelos de inteligencia artificial de OpenAI.
+
+== Dar de alta su cuenta Microsoft en la Universidad de Almería
+
+Para ello, seguir los pasos indicados en el siguiente enlace: https://www.ual.es/descargadesoftware/software-microsoft
+
+[NOTE]
+====
+Solamente en el caso de que no tuvieras activada tu cuenta Microsoft la UAL con anterioridad.
+====
+
+== Solicitar una cuenta Azure for Students
+
+Utilizar el siguiente enlace de Azure for Students: https://azure.microsoft.com/es-es/free/students/
+
+Habrá que iniciar sesión con la cuenta Microsoft de la UAL.
+
+[IMPORTANT]
+====
+Es posible que soliciten datos adicionales como los siguientes:
+
+* *OFERTA:* Azure para estudiantes
+* *ID. DE OFERTA:* MS-AZR-0170P 
+* *ENLACE:* https://azure.microsoft.com/es-es/offers/ms-azr-0170p/
+====
+
+Azure para *estudiantes* ofrece *$100 en créditos de Azure* que puede usar durante los *12 primeros meses* junto con algunos servicios gratuitos (sujetos a cambios), *sin necesidad de tarjeta de crédito*.
+
+El crédito que no se haya utilizado *no se puede transferir a los meses siguientes ni a otras suscripciones de Azure*.
+
+*Si agota el crédito disponible, se deshabilitará su suscripción de Azure*. En ese caso, puede cambiar a una suscripción Pago por uso.
+
+== Acceso a Azure
+
+Para acceder a Azure, utilizar el siguiente enlace: https://portal.azure.com

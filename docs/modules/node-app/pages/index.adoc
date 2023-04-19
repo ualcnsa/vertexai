@@ -1,0 +1,16 @@
+= Aplicación en NodeJS
+
+////
+COLOCA A CONTINUACION LOS OBJETIVOS
+////
+
+
+.Objetivos
+====
+Como construir aplicaciones que utilicen la api de OpenAI en NodeJS utilizando el framework ExpressJS
+
+. Realizar una implementación de un modelo de lenguaje en Azure OpenAI Studio
+. Crear un endpoint en NodeJS que utilice el modelo de lenguaje mediante la api de OpenAI y ExpressJS
+
+====
+
