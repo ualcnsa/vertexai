@@ -1,0 +1,14 @@
+= Primeros pasos con Vertex AI
+:navtitle: Primeros pasos con Vertex AI | Google Cloud
+
+////
+COLOCA A CONTINUACION LOS OBJETIVOS
+////
+.Objetivos
+====
+* Vamos a activar la API de Vertex AI en Google Cloud.
+
+* Después, crearemos las credenciales necesarias para poder interactuar con la API de Vertex AI.
+====
+
+

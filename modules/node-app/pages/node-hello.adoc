@@ -1,0 +1,241 @@
+////
+// Ejemplo 2: Hola Mundo en Vertex AI con LangChain
+////
+
+= _Hola mundo_ en Vertex AI con LangChain
+
+A continuación se muestra un ejemplo de *utilización de la API de Vertex AI en un proyecto NodeJS utilizando ExpressJS y LangChain*. 
+
+****
+Se desarrollará un servicio que permita a un usuario introducir un listado de películas y que el servicio devuelva una lista de películas recomendadas al usuario y con la razón de la recomendación.
+****
+
+== Creación de Endpoint en ExpressJS
+
+Podemos partir de un proyecto NodeJS con ExpressJS. En este caso, se ha utilizado el proyecto https://github.com/ualcnsa/nodeapp. Este proyecto implementa un hola mundo en NodeJS con ExpressJS.
+
+El primer paso es instalar las dependencias necesarias para poder utilizar la librería LangChain sobre Vertex AI.
+
+LangChain es una librería que permite interactuar con LLMs (Large Language Models) de forma sencilla. Incluye una serie de clases y métodos que facilitan la interacción con los modelos de lenguaje, como por ejemplo, la creación de mensajes y la obtención de respuestas.
+
+Para ello, se debe ejecutar el siguiente comando:
+
+[source,shell]
+----
+npm install langchain
+npm install @langchain/google-vertexai
+----
+
+En segundo lugar, se debe crear un fichero `src/config/configuration.js` con el contenido de las credenciales de la cuenta de servicio para Vertex AI:
+
+[source,javascript]
+----
+const configuration = {
+  vertexAI: {
+    credentials: {
+      type: 'service_account',
+      project_id: 'langchain-gemini-418916', <1>
+      private_key_id: '6748041cc07c6e83cdd3001fa83301eb5abc8795',
+      private_key:
+        '-----BEGIN PRIVATE ... -----END PRIVATE KEY-----\n', <2>
+      client_email:
+        'langchain-vertex-ai@langchain-gemini-418916.iam.gserviceaccount.com',
+      client_id: '107828751289044436034',
+      auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+      token_uri: 'https://oauth2.googleapis.com/token',
+      auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+      client_x509_cert_url:
+        'https://www.googleapis.com/robot/v1/metadata/x509/langchain-vertex-ai%40langchain-gemini-418916.iam.gserviceaccount.com',
+      universe_domain: 'googleapis.com',
+    },
+  },
+};
+
+module.exports = configuration;
+----
+
+<1> Se indica el `project_id` del proyecto de Google Cloud.
+<2> Se indica la `private_key` de la cuenta de servicio.
+
+[NOTE]
+====
+Por motivos de seguridad, se recomienda no incluir las credenciales en el código fuente. En su lugar, se recomienda utilizar variables de entorno o secretos.
+====
+
+Tambien instalaremos la librería de zod que nos será de utilidad para formatear las respuestas de la API de Vertex AI:
+
+[source,shell]
+----
+npm install zod
+----
+
+A continuación, se debe crear un fichero `src/services/movie-recommendations.js` con el siguiente contenido:
+
+[source,javascript]
+----
+const { z } = require('zod');
+const { PromptTemplate } = require('@langchain/core/prompts');
+const { StructuredOutputParser } = require('@langchain/core/output_parsers');
+const { RunnableSequence } = require('@langchain/core/runnables');
+
+class MovieRecommendationsService {
+  constructor(model) {
+    this.model = model; <1>
+
+    this.parser = StructuredOutputParser.fromZodSchema( <2>
+      z.object({
+        movies: z
+          .array(
+            z.object({
+              "title:" z.string().describe('title of the movie'),
+              "director:" z.string().describe('director of the movie'),
+              "year:" z.number().describe('year the movie was released'),
+              "reason:" z
+                .string()
+                .describe('reason why the movie was recommended'),
+            })
+          )
+          .describe('json array of recommended movies'),
+      })
+    );
+
+    this.chain = RunnableSequence.from([ <3>
+      new PromptTemplate({
+        template: `Given a list of movies suggest 5 new movies. Do not repeat the movies from the list.\n{format_instructions}
+        List of movies: {movies}`, <4>
+        inputVariables: ['movies'], <5>
+        partialVariables: {
+          format_instructions: this.parser.getFormatInstructions(), <6>
+        },
+      }),
+      this.model,
+      this.parser,
+    ]);
+  }
+
+  async getMovieRecommendations({ movies }) {
+    const response = await this.chain.invoke({ <7>
+      movies: movies.join(','),
+    });
+
+    return response;
+  }
+}
+
+module.exports = MovieRecommendationsService;
+----
+
+<1> Se inyecta la API de Vertex AI.
+<2> Se define el parser de la respuesta de la API de Vertex AI. Mediante la librería zod, se define y describe el formato de la respuesta.
+<3> Se crea una cadena de ejecución que incluye el mensaje que se va a enviar al modelo de Vertex AI, el modelo de Vertex AI y el parser de la respuesta.
+<4> Se define el mensaje que se va a enviar al modelo de Vertex AI. En este caso, se le pasa una lista de películas y se le pide que recomiende 5 películas nuevas.
+<5> Se definen las variables de entrada del mensaje.
+<6> Se obtienen las instrucciones de formato del parser.
+<7> Se invoca la cadena de ejecución con las películas introducidas por el usuario.
+
+[NOTE]
+====
+Puesto que el uso de la API de Vertex AI es un servicio de pago, se recomienda diseñar los mensajes utilizando el playground de Vertex AI para obtener una estimación del coste de la llamada.
+====
+
+Por último, se ha modificado el fichero `src/app.js` para añadir el endpoint `/movie-recommendations`:
+
+[source,javascript]
+----
+const express = require('express');
+const bodyParser = require('body-parser');
+
+...
+
+const MovieRecommendationsService = require('./services/movie-recommendations'); <1>
+const configuration = require('./config/configuration'); <1>
+const { VertexAI } = require('@langchain/google-vertexai'); <1>
+
+const app = express();
+app.use(bodyParser.json()); <2>
+
+...
+
+app.put('/post-test', async (req, res) => { <3>
+  const recommendations = await new MovieRecommendationsService(
+    new VertexAI({
+      modelName: 'gemini-1.0-pro', <4>
+      authOptions: {
+        credentials: configuration.vertexAI.credentials, <5>
+        projectId: configuration.vertexAI.credentials.project_id, <5>
+      },
+    })
+  ).getMovieRecommendations(req.body); <6>
+  res.send(recommendations); <7>
+});
+
+module.exports = app;
+----
+
+<1> Se importan las dependencias necesarias.
+<2> Se añade el middleware `body-parser` para poder parsear el cuerpo de la petición.
+<3> Se añade el endpoint `/movie-recommendations`.
+<4> Se indica el modelo de Vertex AI que se va a utilizar. En este caso, se ha utilizado el modelo `gemini-1.0-pro`.
+<5> Se inyectan las credenciales de la cuenta de servicio de Vertex AI.
+<6> Se llama al servicio `MovieRecommendationsService` para obtener las recomendaciones de películas.
+<7> Se devuelve el resultado de las recomendaciones de películas.
+
+== Prueba del Endpoint
+
+Para probar el endpoint, se puede utilizar Postman. En este caso, se ha utilizado el siguiente JSON:
+
+[source,json]
+----
+{
+  "movies": [
+    "The Matrix",
+    "Blade Runner",
+    "2001: A Space Odyssey"
+  ]
+}
+----
+
+y se ha obtenido el siguiente resultado:
+
+[source,json]
+----
+{
+  "movies": [
+    {
+      "title": "Eternal Sunshine of the Spotless Mind",
+      "director": "Michel Gondry",
+      "year": 2004,
+      "reason": "A thought-provoking and emotionally resonant exploration of love, memory, and identity."
+    },
+    {
+      "title": "Spirited Away",
+      "director": "Hayao Miyazaki",
+      "year": 2001,
+      "reason": "A visually stunning and imaginative animated adventure that captures the wonder and challenges of childhood."
+    },
+    {
+      "title": "The Godfather",
+      "director": "Francis Ford Coppola",
+      "year": 1972,
+      "reason": "A gripping and epic crime saga that explores the themes of family, loyalty, and betrayal."
+    },
+    {
+      "title": "The Shawshank Redemption",
+      "director": "Frank Darabont",
+      "year": 1994,
+      "reason": "An uplifting and emotionally powerful story about hope, resilience, and the transformative power of friendship."
+    },
+    {
+      "title": "Parasite",
+      "director": "Bong Joon-ho",
+      "year": 2019,
+      "reason": "A thought-provoking and socially conscious film that explores the themes of class inequality, family dynamics, and the pursuit of wealth."
+    }
+  ]
+}
+----
+
+[NOTE]
+====
+La llamada a la API de Vertex AI lleva un coste asociado derivado del número de tokens que se envían al modelo. Para este número se tiene en cuenta tanto el número de tokens de los mensajes en el código como el número de tokens de los mensajes en el JSON de respuesta.
+====

@@ -1,0 +1,79 @@
+= Acceso a modelos de lenguaje mediante Vertex AI en Google Cloud
+
+== Introducción a Vertex AI
+
+Vertex AI es una plataforma de inteligencia artificial y machine learning que permite a los desarrolladores y científicos de datos construir, desplegar y gestionar modelos de machine learning de forma sencilla y eficiente.
+
+Proporciona acceso a una amplia variedad de modelos pre-entrenados, incluyendo modelos de lenguaje como:
+
+- Gemini
+- Claude
+- Llama
+
+Estos modelos pueden ser utilizados para tareas de generación de texto, traducción, resumen, etc. con el cr´dito de estudiantes de Google Cloud.
+
+== Solicitar acceso a la API de Vertex AI
+
+Para empezar a trabajar necesitamos solicitar acceso a la API de Vertex AI. Para ello, hay que seguir los siguientes pasos:
+
+1. Acceder a la consola de Google Cloud Platform: https://console.cloud.google.com/.
+2. Crear un proyecto nuevo o seleccionar uno existente.
+3. Habilitar la API de Vertex AI en el proyecto.
+    3.1. Ir a la sección de APIs y servicios.
+    3.2. Buscar "Vertex AI API" y habilitarla.
+
+[NOTE]
+====
+Hay que seleccionar la cuenta de facturación del cupón de crédito de estudiantes de Google Cloud.
+====
+
+
+== Crear cuenta de servicio y descargar clave de acceso
+
+Para poder utilizar la API de Vertex AI necesitamos crear una cuenta de servicio y descargar una clave de acceso. Para ello, hay que seguir los siguientes pasos:
+
+. Acceder a la consola de Google Cloud Platform: https://console.cloud.google.com/.
+. Seleccionar el proyecto en el que se ha habilitado la API de Vertex AI.
+. Ir a la sección de IAM y administración.
+. Crear una cuenta de servicio.
+.. Seleccionar "Crear cuenta de servicio".
+.. Asignar un nombre y el rol de "Agente de servicio de Vertex AI".
+.. Crear la cuenta de servicio.
+
+A continuación hay que crear las credenciales de la cuenta de servicio y descargar la clave de acceso en formato JSON. Esta clave de acceso se utilizará para autenticar las peticiones a la API de Vertex AI.
+
+. Acceder a la consola de Google Cloud Platform: https://console.cloud.google.com/.
+. Seleccionar el proyecto en el que se ha habilitado la API de Vertex AI.
+. Ir a la sección de IAM y administración.
+. Ir a la sección de Cuentas de servicio.
+. Seleccionar la cuenta de servicio creada anteriormente.
+. Crear una clave de acceso.
+.. Ir a la sección de "Claves".
+.. Seleccionar "Añadir clave" y elegir el formato JSON.
+
+[NOTE]
+====
+Es importante guardar la clave de acceso en un lugar seguro, ya que no se podrá descargar de nuevo.
+Esté es un ejemplo de cómo se vería la clave de acceso en formato JSON:
+
+[source,javascript]
+{
+    type: 'service_account',
+    project_id: 'langchain-gemini-418916',
+    private_key_id: '6748041cc07c6e83cdd3001fa83301eb5abc8795',
+    private_key:
+    '-----BEGIN PRIVATE KEY----- ... -----END PRIVATE KEY-----\n',
+    client_email:
+    'langchain-vertex-ai@langchain-gemini-418916.iam.gserviceaccount.com',
+    client_id: '107828751289044436034',
+    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+    token_uri: 'https://oauth2.googleapis.com/token',
+    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+    client_x509_cert_url:
+    'https://www.googleapis.com/robot/v1/metadata/x509/langchain-vertex-ai%40langchain-gemini-418916.iam.gserviceaccount.com',
+    universe_domain: 'googleapis.com',
+}
+
+====
+
+  

@@ -1,0 +1,8 @@
+name: github-actions
+title: Despliegue continuo con GitHub Actions
+version: 0.22
+prerelease: -beta.1
+nav:
+  - modules/ROOT/nav.adoc
+  - modules/first-steps/nav.adoc
+  - modules/node-app/nav.adoc

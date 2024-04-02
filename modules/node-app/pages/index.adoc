@@ -1,0 +1,15 @@
+= Aplicación en NodeJS
+
+////
+COLOCA A CONTINUACION LOS OBJETIVOS
+////
+
+
+.Objetivos
+====
+Como construir aplicaciones que utilicen la api de Vertex AI en NodeJS utilizando el framework ExpressJS y la librería de LangChain.
+
+. Crear un endpoint en NodeJS que utilice el modelo de lenguaje mediante la api de Vertex AI y la librería de LangChain.
+
+====
+
