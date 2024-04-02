@@ -17,7 +17,7 @@ Codificación, idioma, tabla de contenidos, tipo de documento
 :lang: es
 :toc: right
 :toc-title: Tabla de contenidos
-:keywords: OpenAI Servicios Aplicaciones Express NodeJS
+:keywords: VertexAI LangChain Servicios Aplicaciones Express NodeJS
 :doctype: book
 :icons: font
 
@@ -35,7 +35,7 @@ Codificación, idioma, tabla de contenidos, tipo de documento
 :example-caption!: 
 
 
-:page-component-display-version: 0.23.0
+:page-component-display-version: 0.24.0
 
 // :leveloffset: 1
 
@@ -49,8 +49,7 @@ include::{sectionPath}/index.adoc[]
 :sectionPath: modules/{section}/pages
 :imagesdir: modules/{section}/images
 include::{sectionPath}/index.adoc[]
-include::{sectionPath}/azure-subscription.adoc[leveloffset=+1]
-include::{sectionPath}/azure-openai.adoc[leveloffset=+1]
+include::{sectionPath}/gcp-vertexai.adoc[leveloffset=+1]
 
 :section: node-app
 :sectionPath: modules/{section}/pages

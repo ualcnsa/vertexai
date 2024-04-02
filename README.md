@@ -1,4 +1,4 @@
-## OpenAI
+## VertexAI
 
-[OpenAI](https://ualcnsa.github.io/openai/)
+[VertexAI](https://ualcnsa.github.io/vertexai/)
 

@@ -1,7 +1,7 @@
 ////
 Nombre y título del trabajo
 ////
-= OpenAI
+= Vertex AI | Google Cloud
 :navtitle: Introducción
 
 Computación en la Nube, Servicios y Aplicaciones. Francisco García <paco.garcia@ual.es>, Joaquín Cañadas <jjcanada@ual.es>
@@ -15,7 +15,7 @@ COLOCA A CONTINUACION LOS OBJETIVOS
 .Objetivos
 ====
 * Utilizar servicios de avanzados en la nube para la realización de tareas inteligentes.
-* Introducción al uso de servicios de inteligencia artificial mediante el uso de la API de OpenAI.
+* Introducción al uso de servicios de inteligencia artificial mediante el uso de la API de Vertex AI.
 ====
 
 .Realización y entrega
