@@ -10,17 +10,19 @@ Proporciona acceso a una amplia variedad de modelos pre-entrenados, incluyendo m
 - Claude
 - Llama
 
-Estos modelos pueden ser utilizados para tareas de generación de texto, traducción, resumen, etc. con el cr´dito de estudiantes de Google Cloud.
+Estos modelos pueden ser utilizados para tareas de generación de texto, traducción, resumen, etc. con el crédito de estudiantes de Google Cloud.
 
 == Solicitar acceso a la API de Vertex AI
 
 Para empezar a trabajar necesitamos solicitar acceso a la API de Vertex AI. Para ello, hay que seguir los siguientes pasos:
 
-1. Acceder a la consola de Google Cloud Platform: https://console.cloud.google.com/.
-2. Crear un proyecto nuevo o seleccionar uno existente.
-3. Habilitar la API de Vertex AI en el proyecto.
-    3.1. Ir a la sección de APIs y servicios.
-    3.2. Buscar "Vertex AI API" y habilitarla.
+
+. Acceder a la consola de Google Cloud Platform: https://console.cloud.google.com/.
+. Crear un proyecto nuevo o seleccionar uno existente.
+. Habilitar la API de Vertex AI en el proyecto.
+[lowerroman]
+.. Ir a la sección de APIs y servicios.
+.. Buscar "Vertex AI API" y habilitarla.
 
 [NOTE]
 ====
